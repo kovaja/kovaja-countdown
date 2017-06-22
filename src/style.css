@@ -1,0 +1,33 @@
+.name {
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+.done {
+    background-color: rgba(255,0,0,0.2);
+}
+.hint {
+    float:right;
+}
+.hint .text {
+    display: inline-block;
+    margin-right: 2px;
+    font-size: 16px;
+    color: #747474;
+    font-weight: 400;
+    font-style: italic;
+}
+#arrow {
+    background-image: url("./arrow.png");
+    display: inline-block;
+    height: 40px;
+    width: 83px;
+    margin-right: 70px;
+    background-size: 83px 40px;
+    background-repeat: no-repeat;
+    background-position-y: -2px;
+    -webkit-transform: rotate(-10deg);
+    -moz-transform: rotate(-10deg);
+    -ms-transform: rotate(-10deg);
+    -o-transform: rotate(-10deg);
+    transform: rotate(-10deg);
+}
