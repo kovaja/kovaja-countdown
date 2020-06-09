@@ -1,7 +1,7 @@
 import React from "react";
 
-export class Header extends React.Component{
-    render(){
+export class Header extends React.Component {
+    render() {
         return (
             <div className="row">
                 <div className="col-xs-12">

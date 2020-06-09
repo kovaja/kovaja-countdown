@@ -1,8 +1,8 @@
 import React from 'react';
-import {Header} from '../components/Header';
-import {StartHint} from '../components/StartHint';
-import {Launcher} from './Launcher';
-import {Countdown} from '../components/Countdown';
+import { Header } from '../components/Header';
+import { StartHint } from '../components/StartHint';
+import { Launcher } from './Launcher';
+import { Countdown } from '../components/Countdown';
 
 export default class App extends React.Component {
     constructor() {
@@ -28,121 +28,123 @@ export default class App extends React.Component {
         this.start();
     }
     start() {
-        var interval = setInterval(() => {
+        const interval = setInterval(() => {
             this.iterate();
         }, 1000);
-        this.setState({interval: interval});
+
+        this.setState({ interval });
     }
     iterate() {
-        var cds = this.state.countdowns;
-        for (var c in cds) {
-            if (cds.hasOwnProperty(c)) {
-                this.updateCountdown(cds[c]);
+        const countdowns = this.state.countdowns;
+
+        for (const countdown in countdowns) {
+            if (countdowns.hasOwnProperty(countdown)) {
+                this.updateCountdown(countdowns[countdown]);
             }
         }
-        this.setState({countdowns: cds});
+        this.setState({ countdowns });
     }
-    updateCountdown(c) {
-        if (c.running) {
-            var newTime = c.end - new Date();
-            newTime = Math.floor(newTime / 1000) * 1000;
-            c.time = newTime;
-            c.running = !(newTime <= 0);
+    updateCountdown(countdown) {
+        if (!countdown.running) {
+            return;
         }
+
+        let newTime = countdown.end - new Date();
+        newTime = Math.floor(newTime / 1000) * 1000;
+
+        countdown.time = newTime;
+        countdown.running = !(newTime <= 0);
+
     }
     startCountdown(name, time) {
-        var cds = this.state.countdowns;
-        cds[Object.keys(cds).length] = {
+        const countdowns = this.state.countdowns;
+
+        countdowns[Object.keys(countdowns).length] = {
             name: name,
             time: time,
             end: new Date().getTime() + time,
             running: true
         };
-        this.setState({
-            countdowns: cds
-        });
+
+        this.setState({ countdowns });
     }
     stopCountdown(id) {
-        var cds = this.state.countdowns;
-        delete cds[id];
-        this.setState({countdowns: cds});
+        const countdowns = this.state.countdowns;
+
+        delete countdowns[id];
+
+        this.setState({ countdowns });
     }
     formatTime(t) {
-        /*var dayUnit = 24*60*60;
-         var hourUnit = 60*60;
-         var minUnit = 60;*/
+        const d = new Date(t);
+        const days = d.getUTCDate() - 1;
+        const h = days * 24 + d.getUTCHours();
+        const m = d.getMinutes();
+        const s = d.getSeconds();
 
-        var d = new Date(t);
-        var days = d.getUTCDate() - 1;
-        var h = days * 24 + d.getUTCHours();
-        var m = d.getMinutes();
-        var s = d.getSeconds();
+        const hh = h < 10 ? '0' + h : h;
+        const mm = m < 10 ? '0' + m : m;
+        const ss = s < 10 ? '0' + s : s;
 
-        /*var dayUnit = 24*60*60;
-         var hourUnit = 60*60;
-         var minUnit = 60;
-         t = t / 1000;
-         var days = t / dayUnit >= 1 ? Math.floor(t / dayUnit) : 0;
-         t = t - days*dayUnit;
-         var h = t / hourUnit >= 1 ? (days*24 + Math.floor(t / hourUnit)) : 0;
-         t = t - h * hourUnit;
-         var m = t / minUnit >= 1 ? Math.floor(t / minUnit) : 0;
-         var s = t - m*minUnit;*/
-        var hh = h < 10 ? '0' + h : h;
-        var mm = m < 10 ? '0' + m : m;
-        var ss = s < 10 ? '0' + s : s;
         return hh + ':' + mm + ':' + ss;
     }
     getCountdowns() {
-        var cds = [];
-        for (var id in this.state.countdowns) {
+        const cds = [];
+
+        for (const id in this.state.countdowns) {
             if (this.state.countdowns.hasOwnProperty(id)) {
-                var cd = this.state.countdowns[id];
+                const cd = this.state.countdowns[id];
+
                 cds.push(
-                        <Countdown 
-                            key={id}
-                            id={id}
-                            timestamp={cd.time}
-                            name={cd.name}
-                            time={this.formatTime(cd.time)}
-                            stop={this.stopCountdown.bind(this)}
-                            running={cd.running}
-                            />
-                        );
+                    <Countdown
+                        key={id}
+                        id={id}
+                        timestamp={cd.time}
+                        name={cd.name}
+                        time={this.formatTime(cd.time)}
+                        stop={this.stopCountdown.bind(this)}
+                        running={cd.running}
+                    />
+                );
             }
         }
+
         cds.sort((a, b) => {
             return a.props.timestamp - b.props.timestamp;
         });
+
         return cds;
     }
 
     render() {
-        var cds = this.getCountdowns();
+        const cds = this.getCountdowns();
+
         return (
-                <div className="container">
-                    <Header />
-                    <hr/>
-                    <Launcher start={this.startCountdown.bind(this)}/>
-                    {cds.length > 0 ? cds : <StartHint />}
-                    <hr/>
-                    <h4>TO DO LIST</h4>
-                    <p>Countdown radek vetsi a vic cool text</p>
-                    <p>Bootstrap full responsibility</p>
-                    <p>
-                        <del>Serazovani countdowns</del>,
-                        <del>Validace vstupu do time cisla nebo 1 min 10 hours atd</del>,
-                        <del>Dobehnuti countdown</del>,
-                        <del>On enter vlozeni</del>,
-                        <del>Reakce na moc dlouhy input name</del>,
-                        <del>Reakce na spatny input time</del>,
-                        <del>Formatovani odpoctu</del>,
-                        <del>Musi se udelat jeden pool, ktery bude drzet ty casy a bude volat jeden interval,
-                            ty mu jen budes podsovat vic casu nebo mene casu, countdown pak v podstate bude componenta</del>,
-                        <del>Oprava hlasky no countdowns na start your countdown here</del>,
-                    </p>
-                </div>
-                );
+            <div className="container">
+                <Header />
+                <hr />
+
+                <Launcher start={this.startCountdown.bind(this)} />
+                {cds.length > 0 ? cds : <StartHint />}
+                <hr />
+
+                <h4>TO DO LIST</h4>
+                <ul>
+                    <li>Countdown radek vetsi a vic cool text</li>
+                    <li>Bootstrap full responsibility</li>
+                    <li><del>Serazovani countdowns</del></li>
+                    <li><del>Validace vstupu do time cisla nebo 1 min 10 hours atd</del></li>
+                    <li><del>Dobehnuti countdown</del></li>
+                    <li><del>On enter vlozeni</del></li>
+                    <li><del>Reakce na moc dlouhy input name</del></li>
+                    <li><del>Reakce na spatny input time</del></li>
+                    <li><del>Formatovani odpoctu</del></li>
+                    <li><del>Musi se udelat jeden pool, ktery bude drzet ty casy a bude volat jeden interval,ty mu jen budes podsovat vic casu nebo mene casu, countdown pak v podstate bude componenta</del></li>
+                    <li><del>Oprava hlasky no countdowns na start your countdown here</del></li>
+                </ul>
+
+            </div>
+        );
     }
 }
 
